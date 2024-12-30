@@ -4,24 +4,19 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // Get upstream Ada library
     const ada_dep = b.dependency("ada", .{});
     const ada_lib = b.addStaticLibrary(.{
         .name = "ada",
         .optimize = optimize,
         .target = target,
     });
-
-    _ = b.addModule("ada", .{
-        .root_source_file = b.path("src/ada.zig"),
-    });
-
     ada_lib.addCSourceFile(.{ .file = ada_dep.path("ada.cpp") });
     ada_lib.addIncludePath(ada_dep.path("."));
-
     ada_lib.linkLibCpp();
 
     const lib = b.addStaticLibrary(.{
-        .name = "ada-zig",
+        .name = "ada",
         .root_source_file = b.path("src/ada.zig"),
         .target = target,
         .optimize = optimize,
