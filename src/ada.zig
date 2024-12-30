@@ -108,36 +108,43 @@ pub const Url = struct {
         const protocol_c = c.ada_get_protocol(self.ptr);
         return protocol_c.data[0..protocol_c.length];
     }
-    pub fn getHostname(self: Url) []const u8 {
-        const hostname_c = c.ada_get_hostname(self.ptr);
-        return hostname_c.data[0..hostname_c.length];
-    }
-    pub fn getUsername(self: Url) []const u8 {
-        const result = c.ada_get_username(self.ptr);
-        return result.data[0..result.length];
-    }
-    pub fn getPassword(self: Url) []const u8 {
-        const result = c.ada_get_password(self.ptr);
-        return result.data[0..result.length];
-    }
-    pub fn getPort(self: Url) []const u8 {
-        const result = c.ada_get_port(self.ptr);
-        return result.data[0..result.length];
-    }
     pub fn getPathname(self: Url) []const u8 {
         const result = c.ada_get_pathname(self.ptr);
         return result.data[0..result.length];
     }
-    pub fn getSearch(self: Url) []const u8 {
+    pub fn getHostname(self: Url) ?[]const u8 {
+        const hostname_c = c.ada_get_hostname(self.ptr);
+        if (hostname_c.length == 0) return null;
+        return hostname_c.data[0..hostname_c.length];
+    }
+    pub fn getUsername(self: Url) ?[]const u8 {
+        const result = c.ada_get_username(self.ptr);
+        if (result.length == 0) return null;
+        return result.data[0..result.length];
+    }
+    pub fn getPassword(self: Url) ?[]const u8 {
+        const result = c.ada_get_password(self.ptr);
+        if (result.length == 0) return null;
+        return result.data[0..result.length];
+    }
+    pub fn getPort(self: Url) ?[]const u8 {
+        const result = c.ada_get_port(self.ptr);
+        if (result.length == 0) return null;
+        return result.data[0..result.length];
+    }
+    pub fn getSearch(self: Url) ?[]const u8 {
         const result = c.ada_get_search(self.ptr);
+        if (result.length == 0) return null;
         return result.data[0..result.length];
     }
-    pub fn getHash(self: Url) []const u8 {
+    pub fn getHash(self: Url) ?[]const u8 {
         const result = c.ada_get_hash(self.ptr);
+        if (result.length == 0) return null;
         return result.data[0..result.length];
     }
-    pub fn getHost(self: Url) []const u8 {
+    pub fn getHost(self: Url) ?[]const u8 {
         const result = c.ada_get_host(self.ptr);
+        if (result.length == 0) return null;
         return result.data[0..result.length];
     }
     pub fn getHostType(self: Url) HostType {
@@ -158,9 +165,6 @@ pub const Url = struct {
         return if (self.isValid()) c.ada_has_empty_hostname(self.ptr) else false;
     }
     pub fn hasNonEmptyUsername(self: Url) bool {
-        return if (self.isValid()) c.ada_has_non_empty_username(self.ptr) else false;
-    }
-    pub fn HasNonEmptyUsername(self: Url) bool {
         return if (self.isValid()) c.ada_has_non_empty_username(self.ptr) else false;
     }
     pub fn hasNonEmptyPassword(self: Url) bool {
@@ -442,14 +446,14 @@ test "Url init valid + aggregator getters" {
     try testing.expect(url.isValid());
     try testing.expectEqualStrings("https://user:pass@127.0.0.1:8080/path?query=1#frag", url.getHref());
     try testing.expectEqualStrings("https:", url.getProtocol());
-    try testing.expectEqualStrings("127.0.0.1", url.getHostname());
-    try testing.expectEqualStrings("user", url.getUsername());
-    try testing.expectEqualStrings("pass", url.getPassword());
-    try testing.expectEqualStrings("8080", url.getPort());
+    try testing.expectEqualStrings("127.0.0.1", url.getHostname().?);
+    try testing.expectEqualStrings("user", url.getUsername().?);
+    try testing.expectEqualStrings("pass", url.getPassword().?);
+    try testing.expectEqualStrings("8080", url.getPort().?);
     try testing.expectEqualStrings("/path", url.getPathname());
-    try testing.expectEqualStrings("?query=1", url.getSearch());
-    try testing.expectEqualStrings("#frag", url.getHash());
-    try testing.expectEqualStrings("127.0.0.1:8080", url.getHost());
+    try testing.expectEqualStrings("?query=1", url.getSearch().?);
+    try testing.expectEqualStrings("#frag", url.getHash().?);
+    try testing.expectEqualStrings("127.0.0.1:8080", url.getHost().?);
     try testing.expectEqual(url.getHostType(), HostType.ipv4);
     try testing.expectEqual(url.getSchemeType(), SchemeType.https);
 }
@@ -490,7 +494,7 @@ test "Url aggregator setters + deleters" {
 
     try url.setHref("http://foo.com/bar?x=1#y");
     try testing.expectEqualStrings("http:", url.getProtocol());
-    try testing.expectEqualStrings("foo.com", url.getHostname());
+    try testing.expectEqualStrings("foo.com", url.getHostname().?);
     try testing.expectEqualStrings("/bar", url.getPathname());
     try testing.expect(url.hasSearch());
     url.clearSearch();
@@ -504,20 +508,20 @@ test "Url aggregator setters + deleters" {
     try testing.expect(!url.hasPort());
 
     try url.setUsername("bob");
-    try testing.expectEqualStrings("bob", url.getUsername());
+    try testing.expectEqualStrings("bob", url.getUsername().?);
     try url.setPassword("secret");
-    try testing.expectEqualStrings("secret", url.getPassword());
+    try testing.expectEqualStrings("secret", url.getPassword().?);
 
     try url.setHostname("127.0.0.1");
-    try testing.expectEqualStrings("127.0.0.1", url.getHostname());
+    try testing.expectEqualStrings("127.0.0.1", url.getHostname().?);
     try url.setProtocol("ws:");
     try testing.expectEqualStrings("ws:", url.getProtocol());
     try url.setPathname("/some/path");
     try testing.expectEqualStrings("/some/path", url.getPathname());
     try url.setSearch("?data=1");
-    try testing.expectEqualStrings("?data=1", url.getSearch());
+    try testing.expectEqualStrings("?data=1", url.getSearch().?);
     try url.setHash("#h");
-    try testing.expectEqualStrings("#h", url.getHash());
+    try testing.expectEqualStrings("#h", url.getHash().?);
 }
 
 test "UrlSearchParams basic" {
