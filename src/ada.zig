@@ -28,19 +28,29 @@ pub fn canParseWithBase(path: []const u8, base: []const u8) bool {
 }
 
 /// idnaToUnicode converts an ASCII or UTF-8 URL to Unicode.
-/// Caller is responsible for releasing C-allocated memory.
-pub fn idnaToUnicode(url: []const u8) []const u8 {
-    const result = c.ada_idna_to_unicode(url.ptr, url.len);
+/// Caller is responsible for releasing memory with `free`.
+pub fn idnaToUnicode(allocator: std.mem.Allocator, url: []const u8) ![]const u8 {
+    const ada_owned_string = c.ada_idna_to_unicode(url.ptr, url.len);
 
-    return result.data[0..result.length];
+    const result = try allocator.alloc(u8, ada_owned_string.length);
+    @memcpy(result, ada_owned_string.data[0..ada_owned_string.length]);
+
+    c.ada_free_owned_string(ada_owned_string);
+
+    return result;
 }
 
 /// idnaToAscii converts a Unicode URL to ASCII.
-/// Caller is responsible for releasing C-allocated memory.
-pub fn idnaToAscii(url: []const u8) []const u8 {
-    const result = c.ada_idna_to_ascii(url.ptr, url.len);
+/// Caller is responsible for releasing allocated memory `free`.
+pub fn idnaToAscii(allocator: std.mem.Allocator, url: []const u8) ![]const u8 {
+    const ada_owned_string = c.ada_idna_to_ascii(url.ptr, url.len);
 
-    return result.data[0..result.length];
+    const result = try allocator.alloc(u8, ada_owned_string.length);
+    @memcpy(result, ada_owned_string.data[0..ada_owned_string.length]);
+
+    c.ada_free_owned_string(ada_owned_string);
+
+    return result;
 }
 
 pub const Url = struct {
@@ -56,6 +66,7 @@ pub const Url = struct {
         );
 
         if (!c.ada_is_valid(parsed)) {
+            c.ada_free(parsed);
             return error.InvalidUrl;
         }
 
@@ -239,9 +250,14 @@ pub const UrlSearchParams = struct {
     }
 
     /// caller must free the result.
-    pub fn searchParamsToString(self: UrlSearchParams) []const u8 {
-        const result = c.ada_search_params_to_string(self.ptr);
-        return result.data[0..result.length];
+    pub fn searchParamsToString(self: UrlSearchParams, allocator: std.mem.Allocator) ![]const u8 {
+        const ada_owned_string = c.ada_search_params_to_string(self.ptr);
+
+        const result = try allocator.alloc(u8, ada_owned_string.length);
+        @memcpy(result, ada_owned_string.data[0..ada_owned_string.length]);
+        c.ada_free_owned_string(ada_owned_string);
+
+        return result;
     }
 
     pub fn searchParamsAppend(self: UrlSearchParams, key: []const u8, value: []const u8) void {
@@ -375,13 +391,18 @@ pub const UrlSearchParamsEntriesIterator = struct {
         c.ada_free_search_params_entries_iter(self.ptr);
     }
 
-    // pub fn next(self: UrlSearchParamsEntriesIterator) [2][]const u8 {
-    //     const result = c.ada_search_params_entries_iter_next(self.ptr);
-    //     return [
-    //         result[0].data[0..result[0].length],
-    //         result[1].data[0..result[1].length],
-    //     ];
-    // }
+    pub const Entry = struct {
+        key: []const u8,
+        value: []const u8,
+    };
+
+    pub fn next(self: UrlSearchParamsEntriesIterator) !Entry {
+        const pair = c.ada_search_params_entries_iter_next(self.ptr);
+        return .{
+            .key = pair.key.data[0..pair.key.length],
+            .value = pair.value.data[0..pair.value.length],
+        };
+    }
 
     pub fn hasNext(self: UrlSearchParamsEntriesIterator) bool {
         return c.ada_search_params_entries_iter_has_next(self.ptr);
@@ -401,13 +422,16 @@ test "canParseWithBase" {
 }
 
 test "idnaToUnicode" {
-    // punycode: xn--mgbh0fb -> م
-    const result = idnaToUnicode("xn--strae-oqa.de");
+    const al = std.testing.allocator;
+    const result = try idnaToUnicode(al, "xn--strae-oqa.de");
+    defer al.free(result);
     try testing.expect(std.mem.eql(u8, result, "straße.de"));
 }
 
 test "idnaToAscii" {
-    const result = idnaToAscii("straße.de");
+    const al = std.testing.allocator;
+    const result = try idnaToAscii(al, "straße.de");
+    defer al.free(result);
     try testing.expect(std.mem.eql(u8, result, "xn--strae-oqa.de"));
 }
 
@@ -516,8 +540,10 @@ test "UrlSearchParams basic" {
     sp.searchParamsRemove("x");
     try testing.expectEqual(@as(usize, 1), sp.searchParamsSize());
 
+    const al = std.testing.allocator;
     sp.searchParamsSort();
-    const str = sp.searchParamsToString();
+    const str = try sp.searchParamsToString(al);
+    defer al.free(str);
     // coverage: we only check it doesn't crash or throw
     try testing.expect(str.len > 0);
 
