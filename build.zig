@@ -11,12 +11,11 @@ pub fn build(b: *std.Build) void {
         .target = target,
     });
 
-    const c_flags = [_][]const u8{
-        "",
-    };
-    // ada_lib.addCSourceFile(.{ .file = ada_dep.path("ada_c.h"), .flags = &c_flags });
-    // ada_lib.addCSourceFile(.{ .file = ada_dep.path("ada.h"), .flags = &c_flags });
-    ada_lib.addCSourceFile(.{ .file = ada_dep.path("ada.cpp"), .flags = &c_flags });
+    _ = b.addModule("ada", .{
+        .root_source_file = b.path("src/ada.zig"),
+    });
+
+    ada_lib.addCSourceFile(.{ .file = ada_dep.path("ada.cpp") });
     ada_lib.addIncludePath(ada_dep.path("."));
 
     ada_lib.linkLibCpp();
