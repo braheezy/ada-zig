@@ -521,8 +521,8 @@ test "UrlSearchParams basic" {
     // coverage: we only check it doesn't crash or throw
     try testing.expect(str.len > 0);
 
-    // sp.searchParamsReset("y");
-    // try testing.expect(!sp.searchParamsHas("y"));
+    sp.searchParamsReset("y=2");
+    try testing.expectEqual(sp.searchParamsSize(), 1);
 }
 
 test "UrlSearchParams iterators" {
