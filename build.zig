@@ -15,7 +15,8 @@ pub fn build(b: *std.Build) void {
     ada_lib.addIncludePath(ada_dep.path("."));
     ada_lib.linkLibCpp();
 
-    _ = b.addModule("ada", .{ .root_source_file = b.path("src/ada.zig") });
+    const ada_mod = b.addModule("ada", .{ .root_source_file = b.path("src/ada.zig") });
+    ada_mod.linkLibrary(ada_lib);
 
     const lib = b.addStaticLibrary(.{
         .name = "ada",
