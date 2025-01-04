@@ -69,15 +69,15 @@ pub fn build(b: *std.Build) !void {
 
     const install_docs = b.addInstallDirectory(.{
         .source_dir = exe.getEmittedDocs(),
-        .install_dir = .prefix,
-        .install_subdir = "docs",
+        .install_dir = .{ .custom = "../docs" },
+        .install_subdir = "",
     });
 
     const docs_step = b.step("docs", "Copy documentation artifacts to prefix path");
     docs_step.dependOn(&install_docs.step);
 
     const serve_step = b.step("serve", "Serve documentation");
-    var a3 = .{ "python", "-m", "http.server", "-d", "zig-out/docs/" };
+    var a3 = .{ "python", "-m", "http.server", "-d", "docs/" };
     const serve_run = b.addSystemCommand(&a3);
     serve_step.dependOn(&install_docs.step);
     serve_step.dependOn(&serve_run.step);
