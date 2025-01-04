@@ -1,21 +1,5 @@
 # Ada-Zig
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="108" height="20" role="img" aria-label="zig reference">
-  <a xlink:href="https://braheezy.github.io/ada-zig/">
-  <title>zig reference</title>
-  <linearGradient id="a" x2="0" y2="100%">
-    <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
-    <stop offset="0.7" stop-color="#fff" stop-opacity=".1"/>
-  </linearGradient>
-  <rect rx="3" width="108" height="20" fill="#555"/>
-  <rect rx="3" x="37" width="71" height="20" fill="#f7a41d"/>
-  <path stroke="#f7a41d" stroke-width="2" d="M37 0h4v20h-4z" fill="#f7a41d"/>
-  <rect rx="3" width="108" height="20" fill="url(#a)"/>
-  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-    <text x="19" y="15">zig</text>
-    <text x="72" y="15">reference</text>
-  </g>
-</svg>
-
+[![docs](/assets/zig.svg)](https://braheezy.github.io/ada-zig)
 
 [Ada](https://github.com/ada-url/ada) is a fast and spec-compliant URL parser written in C++. Specification for URL parser can be found from the WHATWG website.
 
