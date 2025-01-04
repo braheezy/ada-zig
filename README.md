@@ -51,5 +51,20 @@ pub fn main() void {
 
 The [Usage docs](https://github.com/ada-url/ada/tree/main?tab=readme-ov-file#usage) from the Ada library are applicable.
 
+```zig
+const std = @import("std");
+
+const ada = @import("ada");
+
+pub fn main() !void {
+    const input_url = "https://user:pass@127.0.0.1:8080/path?query=1#frag";
+
+    const url = try ada.Url.init(input_url);
+    defer url.free();
+
+    std.debug.print("url.host type: {any}\n", .{url.getHostType()});
+}
+```
+
 ## Development
 See `zig build --list`.
