@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const ada = @import("ada.zig");
+const ada = @import("ada");
 
 pub fn main() !void {
     const input_url = "https://user:pass@127.0.0.1:8080/path?query=1#frag";
