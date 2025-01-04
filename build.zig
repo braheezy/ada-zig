@@ -66,4 +66,19 @@ pub fn build(b: *std.Build) !void {
     // running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_lib_unit_tests.step);
+
+    const install_docs = b.addInstallDirectory(.{
+        .source_dir = exe.getEmittedDocs(),
+        .install_dir = .prefix,
+        .install_subdir = "docs",
+    });
+
+    const docs_step = b.step("docs", "Copy documentation artifacts to prefix path");
+    docs_step.dependOn(&install_docs.step);
+
+    const serve_step = b.step("serve", "Serve documentation");
+    var a3 = .{ "python", "-m", "http.server", "-d", "zig-out/docs/" };
+    const serve_run = b.addSystemCommand(&a3);
+    serve_step.dependOn(&install_docs.step);
+    serve_step.dependOn(&serve_run.step);
 }

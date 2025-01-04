@@ -3,8 +3,8 @@
     .version = "0.1.0",
     .dependencies = .{
         .ada = .{
-            .url = "https://github.com/braheezy/ada/archive/546c22a8762d2180d5f5e2bd9e1de79e7ddd33e3.tar.gz",
-            .hash = "1220f600249d1828f645f0eb164715f57e9ad0fc4be745115b0377b3b4ff45e0f9ea",
+            .url = "git+https://github.com/braheezy/ada?ref=2.9.2#bdb2056d95f5dee68a3af9716bf863002090710e",
+            .hash = "1220ddc5b24c5a3fc5194f3024b47adfb02945e90766190e6aadc7010fd17c6aa55f",
         },
     },
 
@@ -12,8 +12,7 @@
         "build.zig",
         "build.zig.zon",
         "src",
-        // For example...
-        //"LICENSE",
-        //"README.md",
+        "LICENSE",
+        "README.md",
     },
 }

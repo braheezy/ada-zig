@@ -1,23 +1,37 @@
 # Ada-Zig
+[Ada](https://github.com/ada-url/ada) is a fast and spec-compliant URL parser written in C++. Specification for URL parser can be found from the WHATWG website.
 
-[Ada](https://github.com/ada-url/ada) is a URL parsing library written in C++. This project contains Zig language bindings.
-
-That means instead of linking the C in your project and interacting directly with the C API, `zig-ada` does it for you, providing a thin wrapper for familiar developer use.
+This project contains Zig language bindings. That means instead of linking the C library directly in your project and interacting with the C API, `zig-ada` does it for you, providing a thin wrapper for familiar Zig use.
 
 ## Usage
+First, add to your `build.zig.zon`:
+```bash
+zig fetch --save git+https://github.com/braheezy/ada-zig#2.9.2
+```
 
-- Add to build.zig.zon
-- Add to build.zig
+Then update your `build.zig`:
+
+```zig
+const ada_dep = b.dependency("ada-zig", .{});
+exe.root_module.addImport("ada", ada_dep.module("ada"));
+```
+
+Finally, in your source code:
+
+```zig
+const ada = @import("ada");
+
+pub fn main() void {
+    const ada_url = try ada.Url.init("https://ziglang.org/");
+
+    std.debug.print(ada_url.getProtocol());
+    // prints 'https'
+}
+```
 
 ## Examples
 
 The [Usage docs](https://github.com/ada-url/ada/tree/main?tab=readme-ov-file#usage) from the Ada library are applicable.
-List of things different:
-
-- []const u8 instead of ada_string
-- Enums for HostType and SchemeType
-- Error types instead of booleans to indicate success.
 
 ## Development
-
-- zig build commands
+See `zig build --list`.

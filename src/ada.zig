@@ -1,14 +1,36 @@
+//! module ada provides zig bindings for the Ada URL library.
+//! The goal is full coverage of the C API with a Zig-friendly API.
+//!
+//! The most common use case is to create a URL from a string, then call methods on it for what you need.
+//! For example:
+//! ```zig
+//! const ada = @import("ada");
+//!
+//!pub fn main() void {
+//!    const ada_url = try ada.Url.init("https://ziglang.org/");
+//!
+//!    std.debug.print(ada_url.getProtocol());
+//! }
+//! ```
 const std = @import("std");
 
 const c = @cImport({
     @cInclude("ada_c.h");
 });
 
+/// Type of URL host as an enum
 pub const HostType = enum {
+    /// Represents common URLs such as "https://www.google.com"
     default,
+    /// Represents ipv4 addresses such as "http://127.0.0.1"
     ipv4,
+    /// Represents ipv6 addresses such as
+    /// "http://[2001:db8:3333:4444:5555:6666:7777:8888]"
     ipv6,
 };
+
+/// Type of the scheme as an enum.
+/// Faster to use than string comparison.
 pub const SchemeType = enum {
     http,
     not_special,
@@ -19,6 +41,10 @@ pub const SchemeType = enum {
     file,
 };
 
+/// Verifies whether the URL strings can be parsed. The function assumes
+/// that the inputs are valid ASCII or UTF-8 strings.
+///
+/// https://url.spec.whatwg.org/#dom-url-canparse
 pub fn canParse(url_string: []const u8) bool {
     return c.ada_can_parse(url_string.ptr, url_string.len);
 }
@@ -53,7 +79,12 @@ pub fn idnaToAscii(allocator: std.mem.Allocator, url: []const u8) ![]const u8 {
     return result;
 }
 
+/// URL is the main wrapper around the Ada URL struct.
+/// It supports parsing, validation, and manipulation of URLs.
+///
+/// See the Ada URL API for more information: https://github.com/ada-url/ada?tab=readme-ov-file#usage
 pub const Url = struct {
+    /// ptr is the internal C URL struct.
     ptr: c.ada_url,
 
     /// Create new URL from absolute URL string. Caller is responsible for releasing C-allocated memory with `free()`.
