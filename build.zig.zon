@@ -3,8 +3,8 @@
     .version = "0.1.0",
     .dependencies = .{
         .ada = .{
-            .url = "git+https://github.com/braheezy/ada?ref=2.9.2#bdb2056d95f5dee68a3af9716bf863002090710e",
-            .hash = "1220ddc5b24c5a3fc5194f3024b47adfb02945e90766190e6aadc7010fd17c6aa55f",
+            .url = "git+https://github.com/braheezy/ada?ref=3.1.0#b68a2928276a30187fb4c5e1f2aa6b9c3e30d87a",
+            .hash = "1220998747fd991222e87bf898bac6245f7997c47984cb1c2da5b405f51326378452",
         },
     },
 
