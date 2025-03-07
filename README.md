@@ -11,13 +11,13 @@ This project contains Zig language bindings. That means instead of linking the C
 First, add to your `build.zig.zon`:
 
 ```bash
-zig fetch --save git+https://github.com/braheezy/adazig#3.1.3
+zig fetch --save git+https://github.com/braheezy/ada-zig#3.1.3
 ```
 
 Then update your `build.zig`:
 
 ```zig
-const ada_dep = b.dependency("ada-zig", .{});
+const ada_dep = b.dependency("adazig", .{});
 exe.root_module.addImport("ada", ada_dep.module("ada"));
 ```
 
