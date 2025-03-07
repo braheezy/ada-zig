@@ -17,8 +17,6 @@ pub fn build(b: *std.Build) !void {
             .target = target,
             .optimize = optimize,
         }),
-        .target = target,
-        .optimize = optimize,
     });
     const ada_artifact = ada_dep.artifact("ada");
 
@@ -40,9 +38,6 @@ pub fn build(b: *std.Build) !void {
 
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
 
-    // Similar to creating the run step earlier, this exposes a `test` step to
-    // the `zig build --help` menu, providing a way for the user to request
-    // running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_lib_unit_tests.step);
 
