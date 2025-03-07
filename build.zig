@@ -12,7 +12,11 @@ pub fn build(b: *std.Build) !void {
 
     const lib = b.addStaticLibrary(.{
         .name = "adazig",
-        .root_source_file = b.path("src/ada.zig"),
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/ada.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
         .target = target,
         .optimize = optimize,
     });
