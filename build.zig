@@ -11,7 +11,7 @@ pub fn build(b: *std.Build) !void {
     });
 
     const lib = b.addStaticLibrary(.{
-        .name = "ada-zig",
+        .name = "adazig",
         .root_source_file = b.path("src/ada.zig"),
         .target = target,
         .optimize = optimize,

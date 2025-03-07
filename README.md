@@ -1,14 +1,17 @@
-# Ada-Zig
+# Ada Zig
+
 [![docs](/assets/zig.svg)](https://braheezy.github.io/ada-zig)
 
 [Ada](https://github.com/ada-url/ada) is a fast and spec-compliant URL parser written in C++. Specification for URL parser can be found from the WHATWG website.
 
-This project contains Zig language bindings. That means instead of linking the C library directly in your project and interacting with the C API, `zig-ada` does it for you, providing a thin wrapper for familiar Zig use.
+This project contains Zig language bindings. That means instead of linking the C library directly in your project and interacting with the C API, `adazig` does it for you, providing a thin wrapper for familiar Zig use.
 
 ## Usage
+
 First, add to your `build.zig.zon`:
+
 ```bash
-zig fetch --save git+https://github.com/braheezy/ada-zig#2.9.2
+zig fetch --save git+https://github.com/braheezy/adazig#3.1.3
 ```
 
 Then update your `build.zig`:
@@ -51,4 +54,5 @@ pub fn main() !void {
 ```
 
 ## Development
+
 See `zig build --list`.

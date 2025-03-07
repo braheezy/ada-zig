@@ -1,12 +1,13 @@
 .{
-    .name = "ada-zig",
-    .version = "0.1.0",
+    .name = .adazig,
+    .version = "3.1.3",
     .dependencies = .{
         .ada = .{
-            .url = "git+https://github.com/braheezy/ada?ref=3.1.0#b68a2928276a30187fb4c5e1f2aa6b9c3e30d87a",
-            .hash = "1220998747fd991222e87bf898bac6245f7997c47984cb1c2da5b405f51326378452",
+            .url = "git+https://github.com/braheezy/ada?ref=3.1.3#c63c3f2902266dbefe5fcbbb83abb2a64da3ec2a",
+            .hash = "ada-3.1.3-kFxYjWYMAACkucuiFu6qaJPUcNwptiAfGrMi_guyRbEA",
         },
     },
+    .fingerprint = 0xa3cdf524fa9387b7,
 
     .paths = .{
         "build.zig",
