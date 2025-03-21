@@ -6,6 +6,8 @@
 
 This project contains Zig language bindings. That means instead of linking the C library directly in your project and interacting with the C API, `adazig` does it for you, providing a thin wrapper for familiar Zig use.
 
+If you want to interact with the C more directly but still consume it using the Zig build system, see the [Ziggified build of Ada](https://github.com/braheezy/ada).
+
 ## Usage
 
 First, add to your `build.zig.zon`:
