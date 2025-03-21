@@ -55,6 +55,8 @@ pub fn main() !void {
 }
 ```
 
+There's also [Zig docs](https://braheezy.github.io/ada-zig) for the package.
+
 ## Development
 
 See `zig build --list`.
