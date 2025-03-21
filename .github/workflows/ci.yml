@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        # Version is pulled from build.zig.zon
+        uses: mlugg/setup-zig@v1
+
+      - name: Build project
+        run: zig build
+
+      - name: Run tests
+        run: zig build test --summary all
