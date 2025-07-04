@@ -4,8 +4,8 @@
     .minimum_zig_version = "0.14.0",
     .dependencies = .{
         .ada = .{
-            .url = "git+https://github.com/braheezy/ada?ref=3.2.4#32c3f84ac285138c82ae9e79b6a1878d68964137",
-            .hash = "ada-3.2.4-kFxYjVEMAABqe-WDkDn0plqYLECWC_Q7zNYXrJCbfifX",
+            .url = "git+https://github.com/braheezy/ada?ref=3.2.5#fb0587b21a4118668c6b81b0938261873196753c",
+            .hash = "ada-3.2.5-kFxYjVAMAAC7trEDLAXFzteI_HFZbOK86weoDYA-dwlc",
         },
     },
     .fingerprint = 0xa3cdf524fa9387b7,
