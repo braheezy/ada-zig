@@ -17,6 +17,8 @@ jobs:
       - name: Setup Zig
         # Version is pulled from build.zig.zon
         uses: mlugg/setup-zig@v1
+        with:
+          version: 0.14.0
 
       - name: Build project
         run: zig build
