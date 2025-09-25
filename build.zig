@@ -10,7 +10,7 @@ pub fn build(b: *std.Build) !void {
         .target = target,
     });
 
-    const lib = b.addStaticLibrary(.{
+    const lib = b.addLibrary(.{
         .name = "adazig",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/ada.zig"),
@@ -28,11 +28,13 @@ pub fn build(b: *std.Build) !void {
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.
-    const lib_unit_tests = b.addTest(.{
-        .root_source_file = b.path("src/ada.zig"),
-        .target = target,
-        .optimize = optimize,
-    });
+    const lib_unit_tests = b.addTest(.{ .root_module = b.createModule(
+        .{
+            .root_source_file = b.path("src/ada.zig"),
+            .target = target,
+            .optimize = optimize,
+        },
+    ) });
 
     lib_unit_tests.linkLibrary(ada_dep.artifact("ada"));
 
@@ -51,7 +53,7 @@ pub fn build(b: *std.Build) !void {
     docs_step.dependOn(&install_docs.step);
 
     const serve_step = b.step("serve", "Serve documentation");
-    var a3 = .{ "python", "-m", "http.server", "-d", "docs/" };
+    var a3 = .{ "python3", "-m", "http.server", "-d", "docs/" };
     const serve_run = b.addSystemCommand(&a3);
     serve_step.dependOn(&install_docs.step);
     serve_step.dependOn(&serve_run.step);
