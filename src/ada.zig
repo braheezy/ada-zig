@@ -13,6 +13,7 @@
 //! }
 //! ```
 const std = @import("std");
+const build_options = @import("build_options");
 
 const c = @cImport({
     @cInclude("ada_c.h");
@@ -40,6 +41,28 @@ pub const SchemeType = enum {
     wss,
     file,
 };
+
+/// Ada version components returned by ada_get_version_components.
+pub const VersionComponents = struct {
+    major: i32,
+    minor: i32,
+    revision: i32,
+};
+
+/// Returns the Ada version string (null-terminated, static storage).
+pub fn getVersion() []const u8 {
+    return std.mem.span(c.ada_get_version());
+}
+
+/// Returns the Ada version components.
+pub fn getVersionComponents() VersionComponents {
+    const v = c.ada_get_version_components();
+    return .{
+        .major = @intCast(v.major),
+        .minor = @intCast(v.minor),
+        .revision = @intCast(v.revision),
+    };
+}
 
 /// Verifies whether the URL strings can be parsed. The function assumes
 /// that the inputs are valid ASCII or UTF-8 strings.
@@ -468,6 +491,18 @@ test "idnaToAscii" {
     const result = try idnaToAscii(al, "straße.de");
     defer al.free(result);
     try testing.expect(std.mem.eql(u8, result, "xn--strae-oqa.de"));
+}
+
+test "version helpers" {
+    const ver = getVersion();
+    try testing.expect(ver.len > 0);
+    try testing.expectEqualStrings(build_options.package_version, ver);
+
+    const comp = getVersionComponents();
+    const semver = try std.SemanticVersion.parse(build_options.package_version);
+    try testing.expectEqual(@as(i32, @intCast(semver.major)), comp.major);
+    try testing.expectEqual(@as(i32, @intCast(semver.minor)), comp.minor);
+    try testing.expectEqual(@as(i32, @intCast(semver.patch)), comp.revision);
 }
 
 test "Url init valid + aggregator getters" {
