@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - main
       - "**"
   workflow_dispatch:
 
@@ -17,6 +16,8 @@ jobs:
       - name: Setup Zig
         # Version is pulled from build.zig.zon
         uses: mlugg/setup-zig@v2
+        with:
+          use-cache: false
 
       - name: Build project
         run: zig build
