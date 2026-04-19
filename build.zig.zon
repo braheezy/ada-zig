@@ -1,11 +1,11 @@
 .{
     .name = .adazig,
-    .version = "3.4.0",
-    .minimum_zig_version = "0.15.1",
+    .version = "3.4.4",
+    .minimum_zig_version = "0.16.0",
     .dependencies = .{
         .ada = .{
-            .url = "git+https://github.com/braheezy/ada?ref=3.4.0#f34836cd7bc4363b522ec34608cd058b0a6108fb",
-            .hash = "ada-3.4.0-kFxYjZwMAADV499H4LnQosItVFNi6JwbT_46Krz4GO5_",
+            .url = "git+https://github.com/braheezy/ada?ref=3.4.4#11a2152e2c06a09cb8d010a59f5586c2b3dfcdbd",
+            .hash = "ada-3.4.4-kFxYjcYMAAC0wZosTlnSxWmKkSTL1pxKxI5OwccUBxW4",
         },
     },
     .fingerprint = 0xa3cdf524fa9387b7,

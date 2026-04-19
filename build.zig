@@ -18,13 +18,15 @@ pub fn build(b: *std.Build) !void {
         version.patch,
     }));
 
+    const lib_root_mod = b.createModule(.{
+        .root_source_file = b.path("src/ada.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+
     const lib = b.addLibrary(.{
         .name = "adazig",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/ada.zig"),
-            .target = target,
-            .optimize = optimize,
-        }),
+        .root_module = lib_root_mod,
     });
     const ada_artifact = ada_dep.artifact("ada");
 
@@ -32,20 +34,13 @@ pub fn build(b: *std.Build) !void {
     ada_mod.linkLibrary(ada_artifact);
     ada_mod.addOptions("build_options", options);
 
-    lib.linkLibrary(ada_artifact);
-    lib.root_module.addOptions("build_options", options);
+    lib_root_mod.linkLibrary(ada_artifact);
+    lib_root_mod.addOptions("build_options", options);
     b.installArtifact(lib);
 
     // Creates a step for unit testing. This only builds the test executable
     // but does not run it.
-    const lib_unit_tests = b.addTest(.{ .root_module = b.createModule(.{
-        .root_source_file = b.path("src/ada.zig"),
-        .target = target,
-        .optimize = optimize,
-    }) });
-
-    lib_unit_tests.linkLibrary(ada_dep.artifact("ada"));
-    lib_unit_tests.root_module.addOptions("build_options", options);
+    const lib_unit_tests = b.addTest(.{ .root_module = lib_root_mod });
 
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
 
@@ -72,7 +67,7 @@ fn getVersionFromZon() std.SemanticVersion {
     const build_zig_zon = @embedFile("build.zig.zon");
     var buffer: [10 * build_zig_zon.len]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buffer);
-    const version = std.zon.parse.fromSlice(
+    const version = std.zon.parse.fromSliceAlloc(
         struct { version: []const u8 },
         fba.allocator(),
         build_zig_zon,
