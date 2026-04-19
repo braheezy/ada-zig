@@ -19,6 +19,9 @@ jobs:
         with:
           use-cache: false
 
+      - name: Prepare Zig cache directories
+        run: mkdir -p /home/runner/.cache/zig/tmp .zig-cache/tmp
+
       - name: Build project
         env:
           ZIG_GLOBAL_CACHE_DIR: /home/runner/.cache/zig
