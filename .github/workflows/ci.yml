@@ -20,7 +20,13 @@ jobs:
           use-cache: false
 
       - name: Build project
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /home/runner/.cache/zig
+          ZIG_LOCAL_CACHE_DIR: .zig-cache
         run: zig build
 
       - name: Run tests
+        env:
+          ZIG_GLOBAL_CACHE_DIR: /home/runner/.cache/zig
+          ZIG_LOCAL_CACHE_DIR: .zig-cache
         run: zig build test --summary all
